@@ -316,7 +316,6 @@ export default function PageNavigation({
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
-          WebkitScrollbarWidth: "none",
         }}
         onWheel={(e) => {
           e.preventDefault();

@@ -3,10 +3,9 @@
 import { CheckIcon } from "@/components/icons/check";
 import { FileIcon } from "@/components/icons/file";
 import { InfoIcon } from "@/components/icons/info";
-import { IconProps } from "@/lib/types";
-import { FC, useState } from "react";
-import PageNavigation from "../components/page-navigation";
 import { Tab } from "@/components/page-navigation/types";
+import { useState } from "react";
+import PageNavigation from "../components/page-navigation";
 
 const fewTabs: Tab[] = [
   {

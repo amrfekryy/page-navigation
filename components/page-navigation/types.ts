@@ -1,4 +1,5 @@
 import { IconProps } from "@/lib/types";
+import { FC } from "react";
 
 export interface Tab {
   id: string;
@@ -8,8 +9,8 @@ export interface Tab {
 }
 
 export interface PageNavigationProps {
-  tabs?: Tab[]
-  activeTab?: string
+  tabs: Tab[]
+  activeTab: string
   onTabChange?: (tabId: string) => void
   onAddPage?: () => void
   onTabsReorder?: (tabs: Tab[]) => void
