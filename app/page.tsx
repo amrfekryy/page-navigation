@@ -1,6 +1,5 @@
 "use client";
 
-
 import { CheckIcon } from "@/components/icons/check";
 import { FileIcon } from "@/components/icons/file";
 import { InfoIcon } from "@/components/icons/info";
@@ -84,8 +83,6 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState("info");
   const [tabs, setTabs] = useState<Tab[]>(fewTabs);
 
-  const [showManyTabs, setShowManyTabs] = useState(false);
-
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
     console.log("Tab changed to:", tabId);
@@ -136,12 +133,7 @@ export default function Page() {
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
           Page navigation component with Next.js and Tailwind
         </h1>
-        <p className="text-gray-600 mb-4">
-          Now using modular components with shadcn/ui DropdownMenu and Tooltip
-          components for better maintainability and consistency.
-        </p>
-
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <button
             onClick={() =>
               setShowManyTabs((s) => {
@@ -153,7 +145,9 @@ export default function Page() {
           >
             {showManyTabs ? "Show Few Tabs" : "Show Many Tabs"}
           </button>
-        </div>
+        </div> */}
+
+        <br />
 
         <PageNavigation
           tabs={tabs}
@@ -172,26 +166,67 @@ export default function Page() {
           <h2 className="text-lg font-semibold text-gray-800 mb-2">
             Current Tab: {activeTab}
           </h2>
-          <p className="text-gray-600 mb-4">
+          {/* <p className="text-gray-600 mb-4">
             Current tab order:{" "}
             {tabs
               .filter((t) => !t.isEditing)
               .map((t) => t.label)
               .join(" → ")}
-          </p>
+          </p> */}
 
+          <br />
           <div className="text-sm text-gray-500">
             <p>
-              <strong>Refactored Features:</strong>
+              <strong>Feature Requirements:</strong>
             </p>
-            <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>Modular component structure with separate files</li>
-              <li>shadcn/ui DropdownMenu for tab actions</li>
-              <li>shadcn/ui Tooltip for better UX</li>
-              <li>shadcn/ui Button components throughout</li>
-              <li>Improved maintainability and code organization</li>
-              <li>Type-safe interfaces in separate types file</li>
-            </ul>
+            <div className="list-disc list-inside mt-2 space-y-1">
+              <div>
+                ✔ Show a series of form pages (e.g. “Info”, “Details”, “Other”,
+                “Ending”)
+              </div>
+              <div>✔ Support drag to re-order pages</div>
+              <div>
+                ✔ Support adding a new page between any two existing pages via a
+                "+" button that appears on hover
+              </div>
+              <div>
+                ✔ Open a context menu per page (rename, duplicate, delete -
+                those buttons don't need to do anything though)
+              </div>
+              <div>
+                ✔ Highlight the active page + allow selecting other pages
+              </div>
+            </div>
+          </div>
+          <br />
+          <div className="text-sm text-gray-500">
+            <p>
+              <strong>Extra Features Implemented:</strong>
+            </p>
+            <div className="list-disc list-inside mt-2 space-y-1">
+              <div>
+                ✔ Most context menu actions are functional (set as first page,
+                rename, duplicate, delete)
+              </div>
+              <div>
+                ✔ Support scrolling by mouse or scroll buttons on the sides when
+                there are{" "}
+                <span
+                  className="underline text-red-600 cursor-pointer"
+                  onClick={() => setTabs(moreTabs)}
+                >
+                  many tabs
+                </span>
+                . Scroll buttons are hidden when there are{" "}
+                <span
+                  className="underline text-red-600 cursor-pointer"
+                  onClick={() => setTabs(fewTabs)}
+                >
+                  few tabs
+                </span>
+                .
+              </div>
+            </div>
           </div>
         </div>
       </div>

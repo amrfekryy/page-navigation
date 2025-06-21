@@ -1,65 +1,74 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useRef, useEffect } from "react"
-import { Check, X, File } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import type { Tab } from "./types"
-import { FileIcon } from "../icons/file"
+import { Button } from "@/components/ui/button";
+import { Check, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { FileIcon } from "../icons/file";
+import type { Tab } from "./types";
 
 interface InlineEditTabProps {
-  tab: Tab
-  onSave: (id: string, name: string) => void
-  onCancel: (id: string) => void
-  isAtEnd?: boolean
+  tab: Tab;
+  onSave: (id: string, name: string) => void;
+  onCancel: (id: string) => void;
+  isAtEnd?: boolean;
+  isAtStart?: boolean;
 }
 
-export function InlineEditTab({ tab, onSave, onCancel, isAtEnd = false }: InlineEditTabProps) {
-  const [name, setName] = useState(tab.label || "")
-  const inputRef = useRef<HTMLInputElement>(null)
+export function InlineEditTab({
+  tab,
+  onSave,
+  onCancel,
+  isAtEnd = false,
+  isAtStart = false,
+}: InlineEditTabProps) {
+  const [name, setName] = useState(tab.label || "");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.focus()
-      inputRef.current.select()
+      inputRef.current.focus();
+      inputRef.current.select();
     }
-  }, [])
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      e.preventDefault()
+      e.preventDefault();
       if (name.trim()) {
-        onSave(tab.id, name.trim())
+        onSave(tab.id, name.trim());
       }
     } else if (e.key === "Escape") {
-      e.preventDefault()
-      onCancel(tab.id)
+      e.preventDefault();
+      onCancel(tab.id);
     }
-  }
+  };
 
   const handleBlur = () => {
     if (name.trim()) {
-      onSave(tab.id, name.trim())
+      onSave(tab.id, name.trim());
     } else {
-      onCancel(tab.id)
+      onCancel(tab.id);
     }
-  }
+  };
 
   const handleSave = () => {
     if (name.trim()) {
-      onSave(tab.id, name.trim())
+      onSave(tab.id, name.trim());
     }
-  }
+  };
 
   const handleCancel = () => {
-    onCancel(tab.id)
-  }
+    onCancel(tab.id);
+  };
 
   return (
     <div className="flex items-center justify-center w-full">
       {/* Left connector */}
-      <div className="w-6 border-t-2 border-dotted border-gray-400"></div>
+      {!isAtStart && (
+        <div className="w-6 border-t-2 border-dotted border-gray-400"></div>
+      )}
 
       {/* Edit form container */}
       <div className="flex items-center gap-1 rounded-md mx-2">
@@ -103,7 +112,9 @@ export function InlineEditTab({ tab, onSave, onCancel, isAtEnd = false }: Inline
       </div>
 
       {/* Right connector - only show if not at end */}
-      {!isAtEnd && <div className="w-6 border-t-2 border-dotted border-gray-400"></div>}
+      {!isAtEnd && (
+        <div className="w-6 border-t-2 border-dotted border-gray-400"></div>
+      )}
     </div>
-  )
+  );
 }

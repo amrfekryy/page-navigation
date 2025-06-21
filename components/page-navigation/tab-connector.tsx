@@ -90,10 +90,10 @@ export function TabConnector({
                     size="sm"
                     onClick={onAddTab}
                     className="
-                      w-4 h-4 p-0 hover:bg-white border-gray-300 rounded-full
+                      w-4 h-4 p-0 bg-white border-gray-300 rounded-full
                       hover:border-gray-400 hover:shadow-sm
-                      transition-all duration-200 ease-out
-                      animate-in zoom-in-0 duration-200
+                      transition-all ease-out
+                      animate-in zoom-in-0 duration-300
                     "
                   >
                     <Plus className="w-2 h-2 text-gray-600" />

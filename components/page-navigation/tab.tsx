@@ -30,6 +30,7 @@ interface SortableTabProps {
   onEditCancel?: (id: string) => void;
   onMenuAction?: (action: string, tabId: string) => void;
   isAtEnd?: boolean;
+  isAtStart?: boolean;
 }
 
 export function SortableTab({
@@ -41,6 +42,7 @@ export function SortableTab({
   onEditCancel,
   onMenuAction,
   isAtEnd = false,
+  isAtStart = false,
 }: SortableTabProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -70,6 +72,7 @@ export function SortableTab({
         onSave={onEditSave}
         onCancel={onEditCancel}
         isAtEnd={isAtEnd}
+        isAtStart={isAtStart}
       />
     );
   }
@@ -121,7 +124,7 @@ export function SortableTab({
               <Button
                 variant="ghost"
                 size="sm"
-                className="w-4 h-4 p-0 ml-1 hover:bg-gray-200 rounded"
+                className="w-5 h-5 p-2 ml-1 hover:bg-gray-200 rounded-full"
                 onClick={(e) => e.stopPropagation()}
               >
                 <MenuIcon />
@@ -146,7 +149,7 @@ export function SortableTab({
                 <DuplicateIcon />
                 Duplicate
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="mx-2" />
               <DropdownMenuItem
                 onClick={() => handleMenuAction("delete")}
                 className="text-red-600 focus:text-red-600"

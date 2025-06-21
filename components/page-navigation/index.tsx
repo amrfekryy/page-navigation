@@ -19,7 +19,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { CheckCircle, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { FileIcon } from "../icons/file";
 import { ScrollButton } from "./scroll-button";
@@ -40,7 +40,6 @@ export default function PageNavigation({
   onSetFirstPage,
 }: PageNavigationProps) {
   const [tabs, setTabs] = useState(initialTabs);
-  const [currentTab, setCurrentTab] = useState(activeTab);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -51,11 +50,6 @@ export default function PageNavigation({
   useEffect(() => {
     setTabs(initialTabs);
   }, [initialTabs]);
-
-  // Update currentTab when activeTab prop changes
-  useEffect(() => {
-    setCurrentTab(activeTab);
-  }, [activeTab]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -148,8 +142,6 @@ export default function PageNavigation({
   const handleTabClick = (tabId: string) => {
     const tab = tabs.find((t) => t.id === tabId);
     if (tab?.isEditing) return;
-
-    setCurrentTab(tabId);
     onTabChange?.(tabId);
   };
 
@@ -164,7 +156,7 @@ export default function PageNavigation({
     const newTabs = [...tabs, newTab];
     setTabs(newTabs);
     // Set the new tab as active
-    setCurrentTab(newTab.id);
+    onTabChange?.(newTab.id);
   };
 
   const handleAddTabBetween = (index: number) => {
@@ -179,7 +171,7 @@ export default function PageNavigation({
     newTabs.splice(index + 1, 0, newTab);
     setTabs(newTabs);
     // Set the new tab as active
-    setCurrentTab(newTab.id);
+    onTabChange?.(newTab.id);
   };
 
   const handleEditSave = (tabId: string, name: string) => {
@@ -208,10 +200,9 @@ export default function PageNavigation({
   const handleEditCancel = (tabId: string) => {
     setTabs((prevTabs) => prevTabs.filter((tab) => tab.id !== tabId));
     // If we cancelled the active tab, switch to the first available tab
-    if (currentTab === tabId) {
+    if (activeTab === tabId) {
       const remainingTabs = tabs.filter((tab) => tab.id !== tabId);
       if (remainingTabs.length > 0) {
-        setCurrentTab(remainingTabs[0].id);
         onTabChange?.(remainingTabs[0].id);
       }
     }
@@ -262,24 +253,24 @@ export default function PageNavigation({
         });
         // Set the duplicated tab as active after state update
         setTimeout(() => {
-          setCurrentTab(duplicatedTab.id);
           onTabChange?.(duplicatedTab.id);
         }, 0);
         break;
-
-      case "delete":
-        if (tabs.length > 1) {
-          setTabs((prevTabs) => {
-            const newTabs = prevTabs.filter((t) => t.id !== tabId);
-            if (currentTab === tabId && newTabs.length > 0) {
-              console.log({currentTab, newTabs});
-              // setCurrentTab(newTabs[0].id);
-              onTabChange?.(newTabs[0].id);
-            }
-            onTabDelete?.(tabId);
-            return newTabs;
-          });
-        }
+        
+        case "delete":
+          if (tabs.length > 1) {
+            setTabs((prevTabs) => {
+              const newTabs = prevTabs.filter((t) => t.id !== tabId);
+              if (activeTab === tabId && newTabs.length > 0) {
+                console.log({activeTab, newTabs});
+                setTimeout(() => {
+                  onTabChange?.(newTabs[0].id);
+                }, 0);
+              }
+              onTabDelete?.(tabId);
+              return newTabs;
+            });
+          }
         break;
     }
   };
@@ -350,13 +341,14 @@ export default function PageNavigation({
                 <div data-editing={tab.isEditing ? "true" : "false"}>
                   <SortableTab
                     tab={tab}
-                    isActive={currentTab === tab.id}
+                    isActive={activeTab === tab.id}
                     onTabClick={handleTabClick}
                     isDragging={activeId === tab.id}
                     onEditSave={handleEditSave}
                     onEditCancel={handleEditCancel}
                     onMenuAction={handleMenuAction}
                     isAtEnd={index === tabs.length - 1}
+                    isAtStart={index === 0}
                   />
                 </div>
 
@@ -380,7 +372,7 @@ export default function PageNavigation({
                   className={`
                     flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium shadow-lg ring-2 ring-blue-300 bg-white border border-gray-200
                     ${
-                      currentTab === activeTab_obj.id
+                      activeTab === activeTab_obj.id
                         ? "text-gray-900"
                         : "text-gray-600"
                     }
@@ -389,7 +381,7 @@ export default function PageNavigation({
                   <span className="flex items-center justify-center w-5 h-5 rounded-full text-xs">
                     <activeTab_obj.icon
                       color={
-                        currentTab === activeTab_obj.id ? "#F59D0E" : undefined
+                        activeTab === activeTab_obj.id ? "#F59D0E" : undefined
                       }
                     />
                   </span>
@@ -412,7 +404,7 @@ export default function PageNavigation({
             <Button
               variant="ghost"
               onClick={handleAddPage}
-              className="flex items-center gap-2 px-3 py-2  bg-gray-100 text-gray-600 border border-transparent hover:bg-white hover:text-gray-900 hover:border-gray-200 shadow-sm flex-shrink-0 rounded-md transition-all duration-300 ease-out"
+              className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-600 border border-transparent hover:bg-white hover:text-gray-900 hover:border-gray-200 shadow-sm flex-shrink-0 rounded-md transition-all duration-300 ease-out"
             >
               <Plus className="w-4 h-4" />
               Add page
