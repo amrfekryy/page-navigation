@@ -1,57 +1,34 @@
-"use client"
+"use client";
 
-import React, { useState, useRef, useEffect } from "react"
-import { Info, FileText, File, CheckCircle, Plus } from "lucide-react"
+import { Button } from "@/components/ui/button";
 import {
-  DndContext,
   closestCenter,
+  DndContext,
+  DragOverlay,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
   type DragStartEvent,
-  DragOverlay,
   type UniqueIdentifier,
-} from "@dnd-kit/core"
+} from "@dnd-kit/core";
 import {
   arrayMove,
+  horizontalListSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { Button } from "@/components/ui/button"
-import { SortableTab } from "./tab"
-import { TabConnector } from "./tab-connector"
-import { ScrollButton } from "./scroll-button"
-import type { Tab, PageNavigationProps } from "./types"
-
-const defaultTabs: Tab[] = [
-  {
-    id: "info",
-    label: "Info",
-    icon: <Info className="w-4 h-4" />,
-  },
-  {
-    id: "details",
-    label: "Details",
-    icon: <FileText className="w-4 h-4" />,
-  },
-  {
-    id: "other",
-    label: "Other",
-    icon: <File className="w-4 h-4" />,
-  },
-  {
-    id: "ending",
-    label: "Ending",
-    icon: <CheckCircle className="w-4 h-4" />,
-    completed: true,
-  },
-]
+} from "@dnd-kit/sortable";
+import { CheckCircle, Plus } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { FileIcon } from "../icons/file";
+import { ScrollButton } from "./scroll-button";
+import { SortableTab } from "./tab";
+import { TabConnector } from "./tab-connector";
+import type { PageNavigationProps, Tab } from "./types";
 
 export default function PageNavigation({
-  tabs: initialTabs = defaultTabs,
+  tabs: initialTabs,
   activeTab = "info",
   onTabChange,
   onAddPage,
@@ -62,23 +39,23 @@ export default function PageNavigation({
   onTabDuplicate,
   onSetFirstPage,
 }: PageNavigationProps) {
-  const [tabs, setTabs] = useState(initialTabs)
-  const [currentTab, setCurrentTab] = useState(activeTab)
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
-  const [needsScrolling, setNeedsScrolling] = useState(false)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [tabs, setTabs] = useState(initialTabs);
+  const [currentTab, setCurrentTab] = useState(activeTab);
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [needsScrolling, setNeedsScrolling] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Update tabs when initialTabs prop changes
   useEffect(() => {
-    setTabs(initialTabs)
-  }, [initialTabs])
+    setTabs(initialTabs);
+  }, [initialTabs]);
 
   // Update currentTab when activeTab prop changes
   useEffect(() => {
-    setCurrentTab(activeTab)
-  }, [activeTab])
+    setCurrentTab(activeTab);
+  }, [activeTab]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -88,252 +65,273 @@ export default function PageNavigation({
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  )
+    })
+  );
 
   const checkScrollButtons = () => {
     if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
-      const hasOverflow = scrollWidth > clientWidth
+      const { scrollLeft, scrollWidth, clientWidth } =
+        scrollContainerRef.current;
+      const hasOverflow = scrollWidth > clientWidth;
 
-      setNeedsScrolling(hasOverflow)
-      setCanScrollLeft(scrollLeft > 0)
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1)
+      setNeedsScrolling(hasOverflow);
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
     }
-  }
+  };
 
   const scrollToStart = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({ left: 0, behavior: "smooth" })
+      scrollContainerRef.current.scrollTo({ left: 0, behavior: "smooth" });
     }
-  }
+  };
 
   const scrollToEnd = () => {
     if (scrollContainerRef.current) {
-      const { scrollWidth, clientWidth } = scrollContainerRef.current
-      scrollContainerRef.current.scrollTo({ left: scrollWidth - clientWidth, behavior: "smooth" })
+      const { scrollWidth, clientWidth } = scrollContainerRef.current;
+      scrollContainerRef.current.scrollTo({
+        left: scrollWidth - clientWidth,
+        behavior: "smooth",
+      });
     }
-  }
+  };
 
   const scrollToShowEditingTab = () => {
     if (scrollContainerRef.current) {
-      const editingTab = scrollContainerRef.current.querySelector('[data-editing="true"]')
+      const editingTab = scrollContainerRef.current.querySelector(
+        '[data-editing="true"]'
+      );
       if (editingTab) {
-        const container = scrollContainerRef.current
-        const containerRect = container.getBoundingClientRect()
-        const tabRect = editingTab.getBoundingClientRect()
+        const container = scrollContainerRef.current;
+        const containerRect = container.getBoundingClientRect();
+        const tabRect = editingTab.getBoundingClientRect();
 
-        const isFullyVisible = tabRect.left >= containerRect.left && tabRect.right <= containerRect.right
+        const isFullyVisible =
+          tabRect.left >= containerRect.left &&
+          tabRect.right <= containerRect.right;
 
         if (!isFullyVisible) {
-          const scrollLeft = container.scrollLeft + (tabRect.left - containerRect.left) - 20
-          container.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" })
+          const scrollLeft =
+            container.scrollLeft + (tabRect.left - containerRect.left) - 20;
+          container.scrollTo({
+            left: Math.max(0, scrollLeft),
+            behavior: "smooth",
+          });
         }
       }
     }
-  }
+  };
 
   useEffect(() => {
-    checkScrollButtons()
-    const handleResize = () => checkScrollButtons()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [tabs])
+    checkScrollButtons();
+    const handleResize = () => checkScrollButtons();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [tabs]);
 
   useEffect(() => {
-    const container = scrollContainerRef.current
+    const container = scrollContainerRef.current;
     if (container) {
-      const handleScroll = () => checkScrollButtons()
-      container.addEventListener("scroll", handleScroll)
-      return () => container.removeEventListener("scroll", handleScroll)
+      const handleScroll = () => checkScrollButtons();
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    const hasEditingTab = tabs.some((tab) => tab.isEditing)
+    const hasEditingTab = tabs.some((tab) => tab.isEditing);
     if (hasEditingTab) {
-      setTimeout(scrollToShowEditingTab, 100)
+      setTimeout(scrollToShowEditingTab, 100);
     }
-  }, [tabs])
+  }, [tabs]);
 
   const handleTabClick = (tabId: string) => {
-    const tab = tabs.find((t) => t.id === tabId)
-    if (tab?.isEditing) return
+    const tab = tabs.find((t) => t.id === tabId);
+    if (tab?.isEditing) return;
 
-    setCurrentTab(tabId)
-    onTabChange?.(tabId)
-  }
+    setCurrentTab(tabId);
+    onTabChange?.(tabId);
+  };
 
   const handleAddPage = () => {
     const newTab: Tab = {
       id: `tab-${Date.now()}`,
       label: "",
-      icon: <File className="w-4 h-4" />,
+      icon: FileIcon,
       isEditing: true,
-    }
+    };
 
-    const newTabs = [...tabs, newTab]
-    setTabs(newTabs)
+    const newTabs = [...tabs, newTab];
+    setTabs(newTabs);
     // Set the new tab as active
-    setCurrentTab(newTab.id)
-  }
+    setCurrentTab(newTab.id);
+  };
 
   const handleAddTabBetween = (index: number) => {
     const newTab: Tab = {
       id: `tab-${Date.now()}`,
       label: "",
-      icon: <File className="w-4 h-4" />,
+      icon: FileIcon,
       isEditing: true,
-    }
+    };
 
-    const newTabs = [...tabs]
-    newTabs.splice(index + 1, 0, newTab)
-    setTabs(newTabs)
+    const newTabs = [...tabs];
+    newTabs.splice(index + 1, 0, newTab);
+    setTabs(newTabs);
     // Set the new tab as active
-    setCurrentTab(newTab.id)
-  }
+    setCurrentTab(newTab.id);
+  };
 
   const handleEditSave = (tabId: string, name: string) => {
     setTabs((prevTabs) => {
-      const newTabs = prevTabs.map((tab) => (tab.id === tabId ? { ...tab, label: name, isEditing: false } : tab))
+      const newTabs = prevTabs.map((tab) =>
+        tab.id === tabId ? { ...tab, label: name, isEditing: false } : tab
+      );
 
-      const savedTab = newTabs.find((t) => t.id === tabId)
+      const savedTab = newTabs.find((t) => t.id === tabId);
       if (savedTab) {
-        const insertIndex = newTabs.indexOf(savedTab)
+        const insertIndex = newTabs.indexOf(savedTab);
         if (insertIndex === newTabs.length - 1) {
-          onTabAdd?.(savedTab)
-          onAddPage?.()
+          onTabAdd?.(savedTab);
+          onAddPage?.();
         } else {
-          onTabAdd?.(savedTab, insertIndex)
+          onTabAdd?.(savedTab, insertIndex);
         }
       }
 
-      return newTabs
-    })
+      return newTabs;
+    });
     // Notify parent of tab change
-    onTabChange?.(tabId)
-  }
+    onTabChange?.(tabId);
+  };
 
   const handleEditCancel = (tabId: string) => {
-    setTabs((prevTabs) => prevTabs.filter((tab) => tab.id !== tabId))
+    setTabs((prevTabs) => prevTabs.filter((tab) => tab.id !== tabId));
     // If we cancelled the active tab, switch to the first available tab
     if (currentTab === tabId) {
-      const remainingTabs = tabs.filter((tab) => tab.id !== tabId)
+      const remainingTabs = tabs.filter((tab) => tab.id !== tabId);
       if (remainingTabs.length > 0) {
-        setCurrentTab(remainingTabs[0].id)
-        onTabChange?.(remainingTabs[0].id)
+        setCurrentTab(remainingTabs[0].id);
+        onTabChange?.(remainingTabs[0].id);
       }
     }
-  }
+  };
 
   const handleMenuAction = (action: string, tabId: string) => {
-    const tab = tabs.find((t) => t.id === tabId)
-    if (!tab) return
+    const tab = tabs.find((t) => t.id === tabId);
+    if (!tab) return;
 
     switch (action) {
       case "setFirst":
         setTabs((prevTabs) => {
-          const tabIndex = prevTabs.findIndex((t) => t.id === tabId)
+          const tabIndex = prevTabs.findIndex((t) => t.id === tabId);
           if (tabIndex > 0) {
-            const newTabs = [...prevTabs]
-            const [movedTab] = newTabs.splice(tabIndex, 1)
-            newTabs.unshift(movedTab)
-            onSetFirstPage?.(tabId)
-            return newTabs
+            const newTabs = [...prevTabs];
+            const [movedTab] = newTabs.splice(tabIndex, 1);
+            newTabs.unshift(movedTab);
+            onSetFirstPage?.(tabId);
+            return newTabs;
           }
-          return prevTabs
-        })
-        break
+          return prevTabs;
+        });
+        break;
 
       case "rename":
-        setTabs((prevTabs) => prevTabs.map((t) => (t.id === tabId ? { ...t, isEditing: true } : t)))
-        break
+        setTabs((prevTabs) =>
+          prevTabs.map((t) => (t.id === tabId ? { ...t, isEditing: true } : t))
+        );
+        break;
 
       case "copy":
         // Copy action - no functionality implemented yet
-        console.log(`Copy action for tab: ${tab.label}`)
-        break
+        console.log(`Copy action for tab: ${tab.label}`);
+        break;
 
       case "duplicate":
         const duplicatedTab: Tab = {
           id: `tab-${Date.now()}`,
           label: `${tab.label} Copy`,
           icon: tab.icon,
-          completed: tab.completed,
-        }
+        };
         setTabs((prevTabs) => {
-          const tabIndex = prevTabs.findIndex((t) => t.id === tabId)
-          const newTabs = [...prevTabs]
-          newTabs.splice(tabIndex + 1, 0, duplicatedTab)
-          onTabDuplicate?.(tabId)
-          return newTabs
-        })
+          const tabIndex = prevTabs.findIndex((t) => t.id === tabId);
+          const newTabs = [...prevTabs];
+          newTabs.splice(tabIndex + 1, 0, duplicatedTab);
+          onTabDuplicate?.(tabId);
+          return newTabs;
+        });
         // Set the duplicated tab as active after state update
         setTimeout(() => {
-          setCurrentTab(duplicatedTab.id)
-          onTabChange?.(duplicatedTab.id)
-        }, 0)
-        break
+          setCurrentTab(duplicatedTab.id);
+          onTabChange?.(duplicatedTab.id);
+        }, 0);
+        break;
 
       case "delete":
         if (tabs.length > 1) {
           setTabs((prevTabs) => {
-            const newTabs = prevTabs.filter((t) => t.id !== tabId)
+            const newTabs = prevTabs.filter((t) => t.id !== tabId);
             if (currentTab === tabId && newTabs.length > 0) {
-              setCurrentTab(newTabs[0].id)
-              onTabChange?.(newTabs[0].id)
+              console.log({currentTab, newTabs});
+              // setCurrentTab(newTabs[0].id);
+              onTabChange?.(newTabs[0].id);
             }
-            onTabDelete?.(tabId)
-            return newTabs
-          })
+            onTabDelete?.(tabId);
+            return newTabs;
+          });
         }
-        break
+        break;
     }
-  }
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id)
-  }
+    setActiveId(event.active.id);
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
+    const { active, over } = event;
 
     if (active.id !== over?.id) {
       setTabs((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id)
-        const newIndex = items.findIndex((item) => item.id === over?.id)
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over?.id);
 
-        const newTabs = arrayMove(items, oldIndex, newIndex)
-        onTabsReorder?.(newTabs)
-        return newTabs
-      })
+        const newTabs = arrayMove(items, oldIndex, newIndex);
+        onTabsReorder?.(newTabs);
+        return newTabs;
+      });
     }
 
-    setActiveId(null)
-  }
+    setActiveId(null);
+  };
 
-  const activeTab_obj = tabs.find((tab) => tab.id === activeId)
-  const isDragging = activeId !== null
+  const activeTab_obj = tabs.find((tab) => tab.id === activeId);
+  const isDragging = activeId !== null;
 
-  const draggableTabs = tabs.filter((tab) => !tab.isEditing)
+  const draggableTabs = tabs.filter((tab) => !tab.isEditing);
 
   return (
     <div className="flex items-center gap-2 p-4 bg-gray-50 rounded-lg">
-      <ScrollButton direction="left" onClick={scrollToStart} disabled={!canScrollLeft} visible={needsScrolling} />
+      <ScrollButton
+        direction="left"
+        onClick={scrollToStart}
+        disabled={!canScrollLeft}
+        visible={needsScrolling}
+      />
 
       <div
         ref={scrollContainerRef}
-        className="flex items-center overflow-x-auto flex-1 min-w-0"
+        className="flex items-center overflow-x-auto flex-1 min-w-0 p-2"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           WebkitScrollbarWidth: "none",
         }}
         onWheel={(e) => {
-          e.preventDefault()
+          e.preventDefault();
           if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollLeft += e.deltaY
-            checkScrollButtons()
+            scrollContainerRef.current.scrollLeft += e.deltaY;
+            checkScrollButtons();
           }
         }}
       >
@@ -343,7 +341,10 @@ export default function PageNavigation({
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <SortableContext items={draggableTabs.map((tab) => tab.id)} strategy={horizontalListSortingStrategy}>
+          <SortableContext
+            items={draggableTabs.map((tab) => tab.id)}
+            strategy={horizontalListSortingStrategy}
+          >
             {tabs.map((tab, index) => (
               <React.Fragment key={tab.id}>
                 <div data-editing={tab.isEditing ? "true" : "false"}>
@@ -359,13 +360,15 @@ export default function PageNavigation({
                   />
                 </div>
 
-                {index < tabs.length - 1 && !tab.isEditing && !tabs[index + 1]?.isEditing && (
-                  <TabConnector
-                    isVisible={activeId === null}
-                    onAddTab={() => handleAddTabBetween(index)}
-                    isDragging={isDragging}
-                  />
-                )}
+                {index < tabs.length - 1 &&
+                  !tab.isEditing &&
+                  !tabs[index + 1]?.isEditing && (
+                    <TabConnector
+                      isVisible={activeId === null}
+                      onAddTab={() => handleAddTabBetween(index)}
+                      isDragging={isDragging}
+                    />
+                  )}
               </React.Fragment>
             ))}
           </SortableContext>
@@ -376,26 +379,19 @@ export default function PageNavigation({
                 <div
                   className={`
                     flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium shadow-lg ring-2 ring-blue-300 bg-white border border-gray-200
-                    ${currentTab === activeTab_obj.id ? "text-gray-900" : "text-gray-600"}
+                    ${
+                      currentTab === activeTab_obj.id
+                        ? "text-gray-900"
+                        : "text-gray-600"
+                    }
                   `}
                 >
-                  <span
-                    className={`
-                      flex items-center justify-center w-5 h-5 rounded-full text-xs
-                      ${
-                        currentTab === activeTab_obj.id
-                          ? "bg-amber-500 text-white"
-                          : activeTab_obj.completed
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-400 text-white"
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full text-xs">
+                    <activeTab_obj.icon
+                      color={
+                        currentTab === activeTab_obj.id ? "#F59D0E" : undefined
                       }
-                    `}
-                  >
-                    {activeTab_obj.completed && currentTab !== activeTab_obj.id ? (
-                      <CheckCircle className="w-3 h-3" />
-                    ) : (
-                      activeTab_obj.icon
-                    )}
+                    />
                   </span>
                   {activeTab_obj.label}
                 </div>
@@ -407,12 +403,16 @@ export default function PageNavigation({
         {!tabs[tabs.length - 1]?.isEditing && (
           <>
             {/* Last connector - no add functionality, no hover effects */}
-            <TabConnector isVisible={activeId === null} isDragging={isDragging} disableHover={true} />
+            <TabConnector
+              isVisible={activeId === null}
+              isDragging={isDragging}
+              disableHover={true}
+            />
 
             <Button
               variant="ghost"
               onClick={handleAddPage}
-              className="flex items-center gap-2 px-3 py-2 text-gray-900 bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex-shrink-0 rounded-md"
+              className="flex items-center gap-2 px-3 py-2  bg-gray-100 text-gray-600 border border-transparent hover:bg-white hover:text-gray-900 hover:border-gray-200 shadow-sm flex-shrink-0 rounded-md transition-all duration-300 ease-out"
             >
               <Plus className="w-4 h-4" />
               Add page
@@ -421,7 +421,12 @@ export default function PageNavigation({
         )}
       </div>
 
-      <ScrollButton direction="right" onClick={scrollToEnd} disabled={!canScrollRight} visible={needsScrolling} />
+      <ScrollButton
+        direction="right"
+        onClick={scrollToEnd}
+        disabled={!canScrollRight}
+        visible={needsScrolling}
+      />
     </div>
-  )
+  );
 }

@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import { Check, X, File } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Tab } from "./types"
+import { FileIcon } from "../icons/file"
 
 interface InlineEditTabProps {
   tab: Tab
@@ -63,8 +64,8 @@ export function InlineEditTab({ tab, onSave, onCancel, isAtEnd = false }: Inline
       {/* Edit form container */}
       <div className="flex items-center gap-1 rounded-md mx-2">
         <div className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-amber-50 border border-amber-200 shadow-sm">
-          <span className="flex items-center justify-center w-5 h-5 rounded-full text-xs bg-amber-500 text-white">
-            <File className="w-3 h-3" />
+          <span className="flex items-center justify-center w-5 h-5 rounded-full text-xs text-white">
+            <FileIcon color="#F59D0E" />
           </span>
 
           <input
@@ -75,7 +76,7 @@ export function InlineEditTab({ tab, onSave, onCancel, isAtEnd = false }: Inline
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             className="bg-transparent border-none outline-none text-amber-800 placeholder-amber-600 min-w-0 w-20"
-            placeholder="Tab name"
+            placeholder="Page title"
           />
 
           <div className="flex items-center gap-1 ml-1">

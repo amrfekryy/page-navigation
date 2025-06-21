@@ -90,17 +90,17 @@ export function TabConnector({
                     size="sm"
                     onClick={onAddTab}
                     className="
-                      w-6 h-6 p-0 bg-white border-gray-300 rounded-full
+                      w-4 h-4 p-0 hover:bg-white border-gray-300 rounded-full
                       hover:border-gray-400 hover:shadow-sm
                       transition-all duration-200 ease-out
                       animate-in zoom-in-0 duration-200
                     "
                   >
-                    <Plus className="w-3 h-3 text-gray-600" />
+                    <Plus className="w-2 h-2 text-gray-600" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Add tab here</p>
+                  <p>Add page here</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

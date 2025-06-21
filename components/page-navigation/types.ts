@@ -1,11 +1,10 @@
-import type React from "react"
+import { IconProps } from "@/lib/types";
 
 export interface Tab {
-  id: string
-  label: string
-  icon: React.ReactNode
-  completed?: boolean
-  isEditing?: boolean
+  id: string;
+  label: string;
+  icon: FC<IconProps>;
+  isEditing?: boolean;
 }
 
 export interface PageNavigationProps {

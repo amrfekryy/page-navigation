@@ -1,10 +1,15 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Inter } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'], // or ['latin-ext'] or ['latin', 'cyrillic'] etc.
+  variable: '--font-inter', // optional for CSS variables
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Page Navigation',
 }
 
 export default function RootLayout({
@@ -13,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className}>
       <body>{children}</body>
     </html>
   )
